@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Yann d'Argenlieu et Yassin Mesrati
+
 fortement inspiré des TD de différences finies UE3.1 à l'ENSTA Bretagne
 """
 
@@ -390,3 +391,4 @@ for tourb in store_pos:
 #etat final
 q = ax.quiver(XV, YV, Spx, Spy, units='xy')
 plt.show()
+
