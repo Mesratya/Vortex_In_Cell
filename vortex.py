@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 @author: Yann d'Argenlieu et Yassin Mesrati
-
 fortement inspiré des TD de différences finies UE3.1 à l'ENSTA Bretagne
 """
 
@@ -309,7 +308,9 @@ print("------------")
 print("N = ",N)
 start = time.time()
 A = A_static(N)
-G = fonction_G(N, [[1.5,4.5,10],[7.5,4.5,10]])
+# G = fonction_G(N, [[1.5,4.5,10],[7.5,4.5,10]])
+side = np.sqrt(N)
+G = fonction_G(N, [[(side+1)/2 - 1 - side/3,(side+1)/2 - 1,10],[(side+1)/2 - 1 + side/3,(side+1)/2 - 1,10]])
 end = time.time()
 print(" Temps de création des matrices : ", end-start )
 print (" Conditionnement de la matrice : ",np.linalg.cond(A))
@@ -342,3 +343,50 @@ plt.title('Q9/ Deux tourbillons', fontsize=10)
 
 plt.show()
 
+# Q 10/
+
+t = 0
+t_step = 1e-2
+t_end = 40
+
+# initialisation
+list_tourb = [[(side+1)/2 - 1 - side/3,(side+1)/2 - 1,10],
+               [(side+1)/2 - 1 + side/3,(side+1)/2 - 1,10]]
+
+store_pos = [[] for _ in range(len(list_tourb))]
+
+while t < t_end :
+    G = fonction_G(N, list_tourb)
+    U_approx = np.linalg.solve(A,G)
+    p = int(np.sqrt(N))
+    h = 1.
+    Spx = (+1 / (2 * h) * derive_y(p)) @ U_approx
+    Spy = (-1 / (2 * h) * derive_x(p)) @ U_approx
+    
+    for idx, tourb in enumerate(list_tourb):
+        pos = tourb[:-1]
+
+        store_pos[idx].append(pos)
+        
+        # schema euler explicite (ordre 1)
+        pos = pos + t_step * speed(pos)
+        
+        tourb[:-1] = pos
+    
+    t += t_step
+
+# plot position history
+fig, ax = plt.subplots()
+plt.grid()
+ax.set_aspect('equal')
+ax.xaxis.set_ticks([k for k in range(0,p)])
+ax.yaxis.set_ticks([k for k in range(0,p)])
+plt.title('Q10/ Trajectoire deux tourbillons après {}sec'.format(t), fontsize=10)
+#trajectoire
+for tourb in store_pos:
+    X = [sublist[0] for sublist in tourb]
+    Y = [sublist[1] for sublist in tourb]
+    plt.plot(X, Y)
+#etat final
+q = ax.quiver(XV, YV, Spx, Spy, units='xy')
+plt.show()
