@@ -303,7 +303,7 @@ def fonction_G(N,list_tourb):   #list_tourb est une liste contenant [[x_tourb1,y
     return GG
 
 
-N = 10*10
+N = 10*10 # (Fonctionne jusqu'a 50*50 1/4h de temps de calcul)
 gamma = 1
 print("------------")
 print("N = ",N)
@@ -351,8 +351,8 @@ t_step = 1e-2
 t_end = 40
 
 # initialisation
-list_tourb = [[(side+1)/2 - 1 - side/3,(side+1)/2 - 1,10],
-               [(side+1)/2 - 1 + side/3,(side+1)/2 - 1,10]]
+list_tourb = [[(side+1)/2 - 1 -3,(side+1)/2 - 1,10],
+               [(side+1)/2 - 1 + 3,(side+1)/2 - 1,10]]
 
 store_pos = [[] for _ in range(len(list_tourb))]
 
@@ -369,8 +369,12 @@ while t < t_end :
 
         store_pos[idx].append(pos)
         
-        # schema euler explicite (ordre 1)
-        pos = pos + t_step * speed(pos)
+        ## schema euler explicite (ordre 1)
+        #pos = pos + t_step * speed(pos)
+        
+        # schema RK2
+        pos_half = pos + (t_step/2)*speed(pos)
+        pos = pos + t_step * speed(pos_half)
         
         tourb[:-1] = pos
     
